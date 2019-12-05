@@ -9,15 +9,16 @@ namespace DotNetCli
 {
     public class CommandContainer
     {
-        private readonly ProjectInfo ProjectInfo;
-        private readonly string CliCommand;
-        private static Dictionary<string, ICommand> Commands = new Dictionary<string, ICommand>();
-        private static List<CommandAttribute> CommandAttributes = new List<CommandAttribute>();
+        public readonly ProjectInfo ProjectInfo;
+        public readonly string CliCommandName;
 
-        public CommandContainer(ProjectInfo projectInfo, string cliCommand)
+        public readonly Dictionary<string, ICommand> Commands = new Dictionary<string, ICommand>();
+        public readonly List<CommandAttribute> CommandAttributes = new List<CommandAttribute>();
+
+        public CommandContainer(ProjectInfo projectInfo, string cliCommandName)
         {
             ProjectInfo = projectInfo;
-            CliCommand = cliCommand;
+            CliCommandName = cliCommandName;
         }
 
         public virtual void CacheCommands(Assembly assembly)
@@ -39,7 +40,7 @@ namespace DotNetCli
         public virtual void PrintUsage()
         {
             Console.WriteLine($@"
-Usage: dotnet {CliCommand} [command]
+Usage: dotnet {CliCommandName} [command]
 
 Commands:
   {"Name".PadRight(20)}{"\t"}{"ShortName".PadRight(10)}{"\t"}{"Description"}");
