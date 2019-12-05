@@ -71,7 +71,7 @@ Commands:
             }
         }
 
-        public virtual void PrintTargetProjectInfo()
+        public virtual void PrintProjectInfo()
         {
             Console.WriteLine($@"
 * {nameof(ProjectInfo.ProjectName)}:        {ProjectInfo.ProjectName}
