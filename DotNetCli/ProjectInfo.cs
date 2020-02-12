@@ -14,10 +14,10 @@ namespace DotNetCli
         public string TargetFramework { get; set; }
         public string CliPackagePath { get; set; }
 
-        public static ProjectInfo GetCurrent()
+        public static ProjectInfo GetCurrent() => Get(Directory.GetCurrentDirectory());
+        public static ProjectInfo Get(string projectRootDirectory)
         {
-            var dir = Directory.GetCurrentDirectory();
-            var projectFile = Directory.GetFiles(dir, "*.csproj").For(files =>
+            var projectFile = Directory.GetFiles(projectRootDirectory, "*.csproj").For(files =>
             {
                 if (files.Length == 0)
                     throw new FileLoadException("The .csproj file is not found in the current directory.");
@@ -30,7 +30,7 @@ namespace DotNetCli
             var xml = new XmlDocument().Then(x => x.Load(projectFile));
             return new ProjectInfo
             {
-                ProjectRoot = dir,
+                ProjectRoot = projectRootDirectory,
                 ProjectName = projectName,
                 AssemblyName = InnerText(xml.SelectNodes("/Project/PropertyGroup/AssemblyName")) ?? Path.GetFileNameWithoutExtension(projectName),
                 RootNamespace = InnerText(xml.SelectNodes("/Project/PropertyGroup/RootNamespace")) ?? Path.GetFileNameWithoutExtension(projectName),
