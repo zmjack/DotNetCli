@@ -1,5 +1,4 @@
-﻿using NEcho;
-using NStandard;
+﻿using NStandard;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -50,9 +49,9 @@ Commands:
             Console.WriteLine();
         }
 
-        public virtual void Run(ConArgs conArgs)
+        public virtual void Run(string[] args)
         {
-            if (!conArgs.Contents.Any())
+            if (!args.Any())
             {
                 PrintUsage();
                 return;
@@ -61,9 +60,9 @@ Commands:
             Console.CursorVisible = false;
             try
             {
-                if (Commands.ContainsKey(conArgs[0]))
-                    Commands[conArgs[0].ToLower()].Run(conArgs);
-                else Console.WriteLine($"Unkown command: {conArgs[0]}");
+                if (Commands.ContainsKey(args[0]))
+                    Commands[args[0].ToLower()].Run(args);
+                else Console.WriteLine($"Unkown command: {args[0]}");
             }
             finally
             {

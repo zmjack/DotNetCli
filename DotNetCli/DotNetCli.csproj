@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <Authors>zmjack</Authors>
-    <Version>0.0.3.1</Version>
+    <Version>0.0.4</Version>
     <Description>Build tools for DotNetCli creation.</Description>
     <PackageProjectUrl>https://github.com/zmjack/DotNetCli.git</PackageProjectUrl>
     <RepositoryUrl>https://github.com/zmjack/DotNetCli.git</RepositoryUrl>
@@ -15,14 +15,14 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="NEcho" Version="0.0.4" />
-  </ItemGroup>
-
-  <ItemGroup>
     <None Include="..\LICENSE.md">
       <Pack>True</Pack>
       <PackagePath></PackagePath>
     </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="NStandard" Version="0.2.15.1" />
   </ItemGroup>
 
 </Project>
