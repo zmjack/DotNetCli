@@ -46,6 +46,7 @@ namespace DotNetCli
             var entry = Assembly.GetEntryAssembly().GetName();
 
             Console.WriteLine($@"{entry.Name} v{entry.Version}
+
 Usage: dotnet {CliCommandName} [command]
 
 Commands:
@@ -69,12 +70,11 @@ Commands:
             {
                 if (Commands.ContainsKey(args[0]))
                     Commands[args[0].ToLower()].Run(args);
-                else Console.WriteLine($"Unkown command: {args[0]}");
+                else PrintUsage();
             }
             finally
             {
                 Console.CursorVisible = true;
-                Console.WriteLine("Completed.");
             }
         }
 
