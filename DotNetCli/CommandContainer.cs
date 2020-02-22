@@ -43,7 +43,9 @@ namespace DotNetCli
 
         public virtual void PrintUsage()
         {
-            Console.WriteLine($@"
+            var entry = Assembly.GetEntryAssembly().GetName();
+
+            Console.WriteLine($@"{entry.Name} v{entry.Version}
 Usage: dotnet {CliCommandName} [command]
 
 Commands:
