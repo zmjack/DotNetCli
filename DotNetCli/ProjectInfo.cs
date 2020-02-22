@@ -5,7 +5,7 @@ using System.Xml;
 
 namespace DotNetCli
 {
-    public class ProjectInfo
+    public struct ProjectInfo
     {
         public string ProjectRoot { get; set; }
         public string ProjectName { get; set; }

@@ -14,7 +14,12 @@ namespace DotNetCli
         public readonly Dictionary<string, ICommand> Commands = new Dictionary<string, ICommand>();
         public readonly List<CommandAttribute> CommandAttributes = new List<CommandAttribute>();
 
-        public CommandContainer(ProjectInfo projectInfo, string cliCommandName)
+        public CommandContainer(string cliCommandName)
+        {
+            CliCommandName = cliCommandName;
+        }
+
+        public CommandContainer(string cliCommandName, ProjectInfo projectInfo)
         {
             ProjectInfo = projectInfo;
             CliCommandName = cliCommandName;
