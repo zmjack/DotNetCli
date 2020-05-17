@@ -50,10 +50,10 @@ namespace DotNetCli
 Usage: dotnet {CliCommandName} [command]
 
 Commands:
-  {"Name".PadRight(20)}{"\t"}{"ShortName".PadRight(10)}{"\t"}{"Description"}");
+  {"Name",20}{"\t"}{"ShortName",10}{"\t"}{"Description"}");
 
             foreach (var attr in CommandAttributes)
-                Console.WriteLine($"  {attr.Name.PadRight(20)}\t{attr.ShortName.PadRight(10)}\t{attr.Description}");
+                Console.WriteLine($"  {attr.Name,20}\t{attr.ShortName,10}\t{attr.Description}");
             Console.WriteLine();
         }
 
