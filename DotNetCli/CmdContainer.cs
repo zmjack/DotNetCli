@@ -1,4 +1,5 @@
-﻿using NStandard;
+﻿using Ink;
+using NStandard;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,20 +7,20 @@ using System.Reflection;
 
 namespace DotNetCli
 {
-    public class CommandContainer
+    public class CmdContainer
     {
         public readonly ProjectInfo ProjectInfo;
         public readonly string CliCommandName;
 
-        public readonly Dictionary<string, ICommand> Commands = new Dictionary<string, ICommand>();
-        public readonly List<CommandAttribute> CommandAttributes = new List<CommandAttribute>();
+        public readonly Dictionary<string, Type> Commands = new Dictionary<string, Type>();
+        public readonly Dictionary<string, CommandAttribute> CommandAttributes = new Dictionary<string, CommandAttribute>();
 
-        public CommandContainer(string cliCommandName)
+        public CmdContainer(string cliCommandName)
         {
             CliCommandName = cliCommandName;
         }
 
-        public CommandContainer(string cliCommandName, ProjectInfo projectInfo)
+        public CmdContainer(string cliCommandName, ProjectInfo projectInfo)
         {
             ProjectInfo = projectInfo;
             CliCommandName = cliCommandName;
@@ -30,14 +31,11 @@ namespace DotNetCli
             var types = assembly.GetTypesWhichMarkedAs<CommandAttribute>();
             foreach (var type in types)
             {
-                var command = Activator.CreateInstance(type) as ICommand;
                 var attr = type.GetCustomAttribute<CommandAttribute>();
-                CommandAttributes.Add(attr);
+                CommandAttributes[attr.Name.Trim().ToLower()] = attr;
 
-                if (!attr.Name.IsNullOrWhiteSpace())
-                    Commands[attr.Name.Trim().ToLower()] = command;
-                if (!attr.ShortName.IsNullOrWhiteSpace())
-                    Commands[attr.ShortName.Trim().ToLower()] = command;
+                if (!attr.Name.IsNullOrWhiteSpace()) Commands[attr.Name.Trim().ToLower()] = type;
+                if (!attr.Abbreviation.IsNullOrWhiteSpace()) Commands[attr.Abbreviation.Trim().ToLower()] = type;
             }
         }
 
@@ -49,12 +47,13 @@ namespace DotNetCli
 
 Usage: dotnet {CliCommandName} [command]
 
-Commands:
-  {"Name",20}{"\t"}{"ShortName",10}{"\t"}{"Description"}");
-
-            foreach (var attr in CommandAttributes)
-                Console.WriteLine($"  {attr.Name,20}\t{attr.ShortName,10}\t{attr.Description}");
-            Console.WriteLine();
+Commands:");
+            Echo.NoBorderTable(CommandAttributes.Select(x => new
+            {
+                x.Value.Name,
+                x.Value.Abbreviation,
+                x.Value.Description,
+            })).Line();
         }
 
         public virtual void Run(string[] args)
@@ -65,16 +64,30 @@ Commands:
                 return;
             }
 
-            Console.CursorVisible = false;
             try
             {
-                if (Commands.ContainsKey(args[0]))
-                    Commands[args[0].ToLower()].Run(args);
+                try { Console.CursorVisible = false; }
+                catch { }
+
+                var cmdName = args[0].ToLower();
+                if (Commands.ContainsKey(cmdName))
+                {
+                    var cmdType = Commands[cmdName];
+                    var cmdAttr = CommandAttributes[cmdName];
+
+                    var command = Activator.CreateInstance(cmdType, new object[] { args }) as Command;
+                    command.Name = cmdAttr.Name;
+                    command.Abbreviation = cmdAttr.Abbreviation;
+                    command.Description = cmdAttr.Description;
+
+                    command.Run();
+                }
                 else PrintUsage();
             }
             finally
             {
-                Console.CursorVisible = true;
+                try { Console.CursorVisible = true; }
+                catch { }
             }
         }
 

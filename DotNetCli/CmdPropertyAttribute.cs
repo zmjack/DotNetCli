@@ -2,15 +2,17 @@
 
 namespace DotNetCli
 {
-    public class CommandAttribute : Attribute, IDecorator
+    [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = false)]
+    public class CmdPropertyAttribute : Attribute, IDecorator
     {
         public string Name { get; set; }
         public string Abbreviation { get; set; }
         public string Description { get; set; }
 
-        public CommandAttribute(string name)
+        public CmdPropertyAttribute(string name)
         {
             Name = name;
         }
     }
+
 }
