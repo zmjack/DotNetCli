@@ -10,20 +10,20 @@ namespace DotNetCli
     public class CmdContainer
     {
         public readonly ProjectInfo ProjectInfo;
-        public readonly string CliCommandName;
+        public readonly string CliName;
 
         public readonly Dictionary<string, Type> Commands = new Dictionary<string, Type>();
         public readonly Dictionary<string, CommandAttribute> CommandAttributes = new Dictionary<string, CommandAttribute>();
 
-        public CmdContainer(string cliCommandName)
+        public CmdContainer(string cliName)
         {
-            CliCommandName = cliCommandName;
+            CliName = cliName;
         }
 
-        public CmdContainer(string cliCommandName, ProjectInfo projectInfo)
+        public CmdContainer(string cliName, ProjectInfo projectInfo)
         {
             ProjectInfo = projectInfo;
-            CliCommandName = cliCommandName;
+            CliName = cliName;
         }
 
         public virtual void CacheCommands(Assembly assembly)
@@ -45,7 +45,7 @@ namespace DotNetCli
 
             Console.WriteLine($@"{entry.Name} v{entry.Version}
 
-Usage: dotnet {CliCommandName} [command]
+Usage: dotnet {CliName} [command]
 
 Commands:");
             Echo.NoBorderTable(CommandAttributes.Select(x => new
@@ -75,7 +75,7 @@ Commands:");
                     var cmdType = Commands[cmdName];
                     var cmdAttr = CommandAttributes[cmdName];
 
-                    var command = Activator.CreateInstance(cmdType, new object[] { args }) as Command;
+                    var command = Activator.CreateInstance(cmdType, new object[] { this, args }) as Command;
                     command.Name = cmdAttr.Name;
                     command.Abbreviation = cmdAttr.Abbreviation;
                     command.Description = cmdAttr.Description;

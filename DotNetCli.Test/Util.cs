@@ -4,7 +4,7 @@ namespace DotNetCli.Test
 {
     internal static class Util
     {
-        public static CmdContainer DefaultCmdContainer = new CmdContainer("DotNetCli.Test");
+        public static CmdContainer DefaultCmdContainer = new CmdContainer("cli");
 
         static Util()
         {

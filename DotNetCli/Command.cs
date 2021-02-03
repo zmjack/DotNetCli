@@ -12,14 +12,15 @@ namespace DotNetCli
         public string Name { get; set; }
         public string Abbreviation { get; set; }
         public string Description { get; set; }
+        public ConArgs Arguments { get; }
 
-        public string[] Arguments { get; }
+        public CmdContainer Container { get; }
 
-        public Command(string[] args)
+        protected Command(CmdContainer container, string[] args)
         {
-            Arguments = args;
+            Container = container;
+            Arguments = new ConArgs(args, "-");
 
-            var conArgs = new ConArgs(args, "-");
             var props = GetType().GetProperties()
                 .Select(p => new
                 {
@@ -34,11 +35,11 @@ namespace DotNetCli
 
                 if (!prop.Attribute.Abbreviation.IsNullOrWhiteSpace())
                 {
-                    values = values.Concat(conArgs[$"-{prop.Attribute.Abbreviation}"]);
+                    values = values.Concat(Arguments[$"-{prop.Attribute.Abbreviation}"]);
                 }
                 if (!prop.Attribute.Name.IsNullOrWhiteSpace())
                 {
-                    values = values.Concat(conArgs[$"--{prop.Attribute.Name}"]);
+                    values = values.Concat(Arguments[$"--{prop.Attribute.Name}"]);
                 }
 
                 if (values.Any())
@@ -65,20 +66,21 @@ namespace DotNetCli
 
             if (!props.Any())
             {
-                Console.WriteLine($"{Environment.NewLine}Usage: dotnet ts ({Abbreviation}|{Name})");
+                Console.WriteLine($"Usage: dotnet {Container.CliName} ({Abbreviation}|{Name})");
                 return;
             }
             else
             {
-                var nameLength = props.Max(p => p.Attribute.Name).For(x => x.Length + 8 - x.Length % 8);
-                Console.WriteLine($"{Environment.NewLine}Usage: dotnet ts ({Abbreviation}|{Name}) [Options]");
-                Console.WriteLine($"{Environment.NewLine}Options:");
+                var nameLength = props.Max(p => $"  {$"-{p.Attribute.Abbreviation}|--{p.Attribute.Name}"}").For(x => x.Length + 4 - x.Length % 4);
+                Console.WriteLine($"Usage: dotnet {Container.CliName} ({Abbreviation}|{Name}) [Options]");
+                Console.WriteLine();
+                Console.WriteLine($"Options:");
 
                 foreach (var prop in props)
                 {
-                    Console.WriteLine($"{Environment.NewLine}Options:");
-                    Console.WriteLine($"{$"-{prop.Attribute.Abbreviation}|--{prop.Attribute.Name}".PadRightA(nameLength)}{prop.Attribute.Description}");
+                    Console.WriteLine($"  {$"-{prop.Attribute.Abbreviation}|--{prop.Attribute.Name}".PadRightA(nameLength)}{prop.Attribute.Description}");
                 }
+                Console.WriteLine();
             }
         }
     }

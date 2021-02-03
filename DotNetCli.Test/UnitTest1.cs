@@ -10,10 +10,18 @@ namespace DotNetCli.Test
         public void Test1()
         {
             using var console = ConsoleAgent.Begin();
-            Util.DefaultCmdContainer.Run(new[] { "hello", "-n", "jack" });
+            Util.DefaultCmdContainer.Run(new[] { "hello", "-h" });
+            Util.DefaultCmdContainer.Run(new[] { "hello", "-n", "Jack" });
 
             var output = ConsoleAgent.ReadAllText();
-            Assert.Equal($"Hello jack.{Environment.NewLine}", output);
+            Assert.Equal($@"
+Usage: dotnet cli (hi|hello) [Options]
+
+Options:
+  -n|--name   Your Name.
+
+Hello Jack.
+", output);
         }
 
     }
