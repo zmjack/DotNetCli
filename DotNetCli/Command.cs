@@ -31,23 +31,27 @@ namespace DotNetCli
 
             foreach (var prop in props)
             {
-                IEnumerable<string> values = new string[0];
+                var valueList = new List<string>();
 
                 if (!prop.Attribute.Abbreviation.IsNullOrWhiteSpace())
                 {
-                    values = values.Concat(Arguments[$"-{prop.Attribute.Abbreviation}"]);
+                    valueList.AddRange(Arguments[$"-{prop.Attribute.Abbreviation}"]);
                 }
                 if (!prop.Attribute.Name.IsNullOrWhiteSpace())
                 {
-                    values = values.Concat(Arguments[$"--{prop.Attribute.Name}"]);
+                    valueList.AddRange(Arguments[$"--{prop.Attribute.Name}"]);
                 }
 
-                if (values.Any())
+                if (valueList.Any())
                 {
                     var propertyType = prop.Property.PropertyType;
                     if (propertyType.IsArray && propertyType.GetElementType() == typeof(string))
-                        prop.Property.SetValue(this, values.ToArray());
-                    else prop.Property.SetValue(this, values.FirstOrDefault());
+                        prop.Property.SetValue(this, valueList.ToArray());
+                    else
+                    {
+                        var value = ConvertEx.ChangeType(valueList.FirstOrDefault(), prop.Property.PropertyType);
+                        prop.Property.SetValue(this, value);
+                    }
                 }
             }
         }
