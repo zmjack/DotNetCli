@@ -79,8 +79,7 @@ Commands:");
                     command.Name = cmdAttr.Name;
                     command.Abbreviation = cmdAttr.Abbreviation;
                     command.Description = cmdAttr.Description;
-
-                    command.Run();
+                    command.InternalRun();
                 }
                 else PrintUsage();
             }

@@ -46,14 +46,34 @@ namespace DotNetCli
                 {
                     var propertyType = prop.Property.PropertyType;
                     if (propertyType.IsArray && propertyType.GetElementType() == typeof(string))
+                    {
                         prop.Property.SetValue(this, valueList.ToArray());
+                    }
+                    else if (propertyType == typeof(bool))
+                    {
+                        var value = valueList.FirstOrDefault();
+                        var boolean = value.IsNullOrWhiteSpace() || value.ToLower() == "true";
+                        prop.Property.SetValue(this, boolean);
+                    }
                     else
                     {
-                        var value = ConvertEx.ChangeType(valueList.FirstOrDefault(), prop.Property.PropertyType);
-                        prop.Property.SetValue(this, value);
+                        var value = valueList.FirstOrDefault();
+                        var finalValue = ConvertEx.ChangeType(value, prop.Property.PropertyType);
+                        prop.Property.SetValue(this, finalValue);
                     }
                 }
             }
+        }
+
+        internal void InternalRun()
+        {
+            if (Arguments["-h"].Concat(Arguments["--help"]).Any())
+            {
+                Console.WriteLine();
+                PrintUsage();
+                return;
+            }
+            Run();
         }
 
         public abstract void Run();
@@ -75,7 +95,7 @@ namespace DotNetCli
             }
             else
             {
-                var nameLength = props.Max(p => $"  {$"-{p.Attribute.Abbreviation}|--{p.Attribute.Name}"}").For(x => x.Length + 4 - x.Length % 4);
+                var nameLength = props.Max(p => $"  {$"-{p.Attribute.Abbreviation}|--{p.Attribute.Name}"}").For(x => (x.Length + 1) + 4 - (x.Length + 1) % 4);
                 Console.WriteLine($"Usage: dotnet {Container.CliName} ({Abbreviation}|{Name}) [Options]");
                 Console.WriteLine();
                 Console.WriteLine($"Options:");

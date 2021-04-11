@@ -1,5 +1,4 @@
 using NStandard;
-using System;
 using Xunit;
 
 namespace DotNetCli.Test
@@ -10,17 +9,21 @@ namespace DotNetCli.Test
         public void Test1()
         {
             using var console = ConsoleAgent.Begin();
-            Util.DefaultCmdContainer.Run(new[] { "hello", "-h" });
-            Util.DefaultCmdContainer.Run(new[] { "hello", "-n", "Jack" });
+            var container = Util.DefaultCmdContainer;
+            container.Run(new[] { "hello", "-h" });
+            container.Run(new[] { "hello", "-n", "Jack" });
+            container.Run(new[] { "hello", "-n", "Jack", "-e" });
 
             var output = ConsoleAgent.ReadAllText();
             Assert.Equal($@"
 Usage: dotnet cli (hi|hello) [Options]
 
 Options:
-  -n|--name   Your Name.
+  -n|--name       Your Name.
+  -e|--enable     Enable?
 
-Hello Jack.
+Hello Jack. (Enable: False)
+Hello Jack. (Enable: True)
 ", output);
         }
 

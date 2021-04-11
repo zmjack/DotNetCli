@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Linq;
-using System.Reflection;
 
 namespace DotNetCli.Test.Builtin
 {
@@ -10,18 +8,14 @@ namespace DotNetCli.Test.Builtin
         [CmdProperty("name", Abbreviation = "n", Description = "Your Name.")]
         public string InputName { get; set; }
 
+        [CmdProperty("enable", Abbreviation = "e", Description = "Enable?")]
+        public bool Enable { get; set; }
+
         public HelloCommand(CmdContainer container, string[] args) : base(container, args) { }
 
         public override void Run()
         {
-            if (Arguments["-h"].Concat(Arguments["--help"]).Any())
-            {
-                Console.WriteLine();
-                PrintUsage();
-                return;
-            }
-
-            Console.WriteLine($"Hello {InputName}.");
+            Console.WriteLine($"Hello {InputName}. (Enable: {Enable})");
         }
     }
 }
