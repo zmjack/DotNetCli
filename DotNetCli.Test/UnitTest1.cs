@@ -9,7 +9,7 @@ namespace DotNetCli.Test
         public void Test1()
         {
             using var console = ConsoleAgent.Begin();
-            var container = Util.DefaultCmdContainer;
+            var container = TestUtil.DefaultCmdContainer;
             container.Run(new[] { "hello", "-h" });
             container.Run(new[] { "hello", "-n", "Jack" });
             container.Run(new[] { "hello", "-n", "Jack", "-e" });

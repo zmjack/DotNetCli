@@ -2,11 +2,11 @@
 
 namespace DotNetCli.Test
 {
-    internal static class Util
+    internal static class TestUtil
     {
-        public static CmdContainer DefaultCmdContainer = new CmdContainer("cli");
+        public static CmdContainer DefaultCmdContainer = new CmdContainer("cli", ProjectInfo.Get("../../.."));
 
-        static Util()
+        static TestUtil()
         {
             DefaultCmdContainer.CacheCommands(Assembly.GetExecutingAssembly());
         }

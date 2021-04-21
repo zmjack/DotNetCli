@@ -19,10 +19,8 @@ namespace DotNetCli
         {
             var projectFile = Directory.GetFiles(projectRootDirectory, "*.csproj").For(files =>
             {
-                if (files.Length == 0)
-                    throw new FileLoadException("The .csproj file has not found in the current directory.");
-                else if (files.Length > 1)
-                    throw new FileLoadException("More than one .csproj files are exist in the current directory.");
+                if (files.Length == 0) throw new FileLoadException("The .csproj file has not found in the current directory.");
+                else if (files.Length > 1) throw new FileLoadException("More than one .csproj files are exist in the current directory.");
                 else return files[0];
             });
             var projectName = Path.GetFileName(projectFile);

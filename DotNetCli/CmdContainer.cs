@@ -12,13 +12,8 @@ namespace DotNetCli
         public readonly ProjectInfo ProjectInfo;
         public readonly string CliName;
 
-        public readonly Dictionary<string, Type> Commands = new Dictionary<string, Type>();
-        public readonly Dictionary<string, CommandAttribute> CommandAttributes = new Dictionary<string, CommandAttribute>();
-
-        public CmdContainer(string cliName)
-        {
-            CliName = cliName;
-        }
+        public readonly Dictionary<string, Type> Commands = new();
+        public readonly Dictionary<string, CommandAttribute> CommandAttributes = new();
 
         public CmdContainer(string cliName, ProjectInfo projectInfo)
         {
@@ -32,10 +27,16 @@ namespace DotNetCli
             foreach (var type in types)
             {
                 var attr = type.GetCustomAttribute<CommandAttribute>();
-                CommandAttributes[attr.Name.Trim().ToLower()] = attr;
-
-                if (!attr.Name.IsNullOrWhiteSpace()) Commands[attr.Name.Trim().ToLower()] = type;
-                if (!attr.Abbreviation.IsNullOrWhiteSpace()) Commands[attr.Abbreviation.Trim().ToLower()] = type;
+                if (!attr.Name.IsNullOrWhiteSpace())
+                {
+                    Commands[attr.Name.Trim().ToLower()] = type;
+                    CommandAttributes[attr.Name.Trim().ToLower()] = attr;
+                }
+                if (!attr.Abbreviation.IsNullOrWhiteSpace())
+                {
+                    Commands[attr.Abbreviation.Trim().ToLower()] = type;
+                    CommandAttributes[attr.Abbreviation.Trim().ToLower()] = attr;
+                }
             }
         }
 
