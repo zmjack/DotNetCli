@@ -32,35 +32,32 @@ namespace DotNetCli
             foreach (var prop in props)
             {
                 var valueList = new List<string>();
-
-                if (!prop.Attribute.Abbreviation.IsNullOrWhiteSpace())
-                {
-                    valueList.AddRange(Arguments[$"-{prop.Attribute.Abbreviation}"]);
-                }
-                if (!prop.Attribute.Name.IsNullOrWhiteSpace())
-                {
-                    valueList.AddRange(Arguments[$"--{prop.Attribute.Name}"]);
-                }
+                if (!prop.Attribute.Abbreviation.IsNullOrWhiteSpace()) valueList.AddRange(Arguments[$"-{prop.Attribute.Abbreviation}"]);
+                if (!prop.Attribute.Name.IsNullOrWhiteSpace()) valueList.AddRange(Arguments[$"--{prop.Attribute.Name}"]);
 
                 if (valueList.Any())
                 {
                     var propertyType = prop.Property.PropertyType;
-                    if (propertyType.IsArray && propertyType.GetElementType() == typeof(string))
+                    static object ConvertTo(string value, Type type)
                     {
-                        prop.Property.SetValue(this, valueList.ToArray());
+                        if (type == typeof(string)) return value;
+                        else if (type == typeof(bool) && value.IsNullOrWhiteSpace()) return true;
+                        else
+                        {
+                            try { return ConvertEx.ChangeType(value, type); }
+                            catch { throw new ArgumentException($"The value ({value}) can not convert to {type.FullName}."); }
+                        }
                     }
-                    else if (propertyType == typeof(bool))
+
+                    if (propertyType.IsArray)
                     {
-                        var value = valueList.FirstOrDefault();
-                        var boolean = value.IsNullOrWhiteSpace() || value.ToLower() == "true";
-                        prop.Property.SetValue(this, boolean);
+                        var elementType = propertyType.GetElementType();
+                        var array = Array.CreateInstance(elementType, valueList.Count);
+                        for (int i = 0; i < valueList.Count; i++)
+                            array.SetValue(ConvertTo(valueList[i], elementType), i);
+                        prop.Property.SetValue(this, array);
                     }
-                    else
-                    {
-                        var value = valueList.FirstOrDefault();
-                        var finalValue = ConvertEx.ChangeType(value, prop.Property.PropertyType);
-                        prop.Property.SetValue(this, finalValue);
-                    }
+                    else prop.Property.SetValue(this, ConvertTo(valueList.FirstOrDefault(), propertyType));
                 }
             }
         }

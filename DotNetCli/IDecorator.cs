@@ -6,5 +6,4 @@
         string Abbreviation { get; }
         string Description { get; }
     }
-
 }
