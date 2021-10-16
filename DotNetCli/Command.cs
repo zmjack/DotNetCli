@@ -21,13 +21,10 @@ namespace DotNetCli
             Container = container;
             Arguments = new ConArgs(args, "-");
 
-            var props = GetType().GetProperties()
-                .Select(p => new
-                {
-                    Property = p,
-                    Attribute = p.GetCustomAttributes(typeof(CmdPropertyAttribute), false).FirstOrDefault() as CmdPropertyAttribute,
-                })
-                .Where(p => p.Attribute is not null);
+            var props = from prop in GetType().GetProperties()
+                        let attr = prop.GetCustomAttributes(typeof(CmdPropertyAttribute), false).FirstOrDefault() as CmdPropertyAttribute
+                        where attr is not null
+                        select new { Property = prop, Attribute = attr };
 
             foreach (var prop in props)
             {

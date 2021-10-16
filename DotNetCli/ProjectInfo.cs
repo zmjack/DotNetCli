@@ -13,6 +13,7 @@ namespace DotNetCli
         public string RootNamespace { get; set; }
         public string TargetFramework { get; set; }
         public string CliPackagePath { get; set; }
+        public string Sdk { get; set; }
 
         public static ProjectInfo GetCurrent() => Get(Directory.GetCurrentDirectory());
         public static ProjectInfo Get(string projectRootDirectory)
@@ -25,26 +26,19 @@ namespace DotNetCli
             });
             var projectName = Path.GetFileName(projectFile);
 
-            var xml = new XmlDocument().Then(x => x.Load(projectFile));
+            var xml = new XmlDocument();
+            xml.Load(projectFile);
+
             return new ProjectInfo
             {
                 ProjectRoot = projectRootDirectory,
                 ProjectName = projectName,
-                AssemblyName = InnerText(xml.SelectNodes("/Project/PropertyGroup/AssemblyName")) ?? Path.GetFileNameWithoutExtension(projectName),
-                RootNamespace = InnerText(xml.SelectNodes("/Project/PropertyGroup/RootNamespace")) ?? Path.GetFileNameWithoutExtension(projectName),
-                TargetFramework = InnerText(xml.SelectNodes("/Project/PropertyGroup/TargetFramework")) ?? "Unknown",
+                AssemblyName = xml.SelectSingleNode("/Project/PropertyGroup/AssemblyName")?.InnerText ?? Path.GetFileNameWithoutExtension(projectName),
+                RootNamespace = xml.SelectSingleNode("/Project/PropertyGroup/RootNamespace")?.InnerText ?? Path.GetFileNameWithoutExtension(projectName),
+                TargetFramework = xml.SelectSingleNode("/Project/PropertyGroup/TargetFramework")?.InnerText ?? "Unknown",
                 CliPackagePath = NuGet.PackageFolder(Assembly.GetCallingAssembly()),
+                Sdk = xml.SelectSingleNode("/Project")?.Attributes["Sdk"]?.InnerText,
             };
         }
-
-        private static string InnerText(XmlNodeList @this)
-        {
-            return @this.For(nodeList =>
-            {
-                if (nodeList.Count > 0) return nodeList[0].InnerText;
-                else return null;
-            });
-        }
-
     }
 }
