@@ -84,11 +84,6 @@ Commands:");
                 }
                 else PrintUsage();
             }
-            catch (Exception ex)
-            {
-                var innerMostException = ex.Forward(x => x.InnerException, x => x.InnerException is null);
-                Console.WriteLine(innerMostException.Message);
-            }
             finally
             {
                 try { Console.CursorVisible = true; }
