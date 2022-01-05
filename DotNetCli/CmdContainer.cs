@@ -9,17 +9,16 @@ namespace DotNetCli
 {
     public class CmdContainer
     {
-        public readonly ProjectInfo ProjectInfo;
+        public readonly ProjectInfo? ProjectInfo;
         public readonly string CliName;
         public event Action<Exception> OnException;
 
         public readonly Dictionary<string, Type> Commands = new();
         public readonly Dictionary<string, CommandAttribute> CommandAttributes = new();
 
-        public CmdContainer(string cliName, Assembly cliAssembly, ProjectInfo projectInfo)
+        public CmdContainer(string cliName, Assembly cliAssembly)
         {
             CliName = cliName;
-            ProjectInfo = projectInfo;
 
             var types = cliAssembly.GetTypesWhichMarkedAs<CommandAttribute>();
             foreach (var type in types)
@@ -36,6 +35,11 @@ namespace DotNetCli
                     CommandAttributes[attr.Abbreviation.Trim().ToLower()] = attr;
                 }
             }
+        }
+
+        public CmdContainer(string cliName, Assembly cliAssembly, ProjectInfo projectInfo) : this(cliName, cliAssembly)
+        {
+            ProjectInfo = projectInfo;
         }
 
         public void ClearExceptionHandler()
@@ -101,12 +105,17 @@ Commands:");
 
         public virtual void PrintProjectInfo()
         {
-            Console.WriteLine($@"
-* {nameof(ProjectInfo.ProjectName)}:        {ProjectInfo.ProjectName}
-* {nameof(ProjectInfo.AssemblyName)}:       {ProjectInfo.AssemblyName}
-* {nameof(ProjectInfo.RootNamespace)}:      {ProjectInfo.RootNamespace}
-* {nameof(ProjectInfo.TargetFramework)}:    {ProjectInfo.TargetFramework}");
-            Console.WriteLine();
+            if (ProjectInfo is not null)
+            {
+                Console.WriteLine($@"
+* {nameof(ProjectInfo.Value.ProjectName)}:        {ProjectInfo.Value.ProjectName}
+* {nameof(ProjectInfo.Value.AssemblyName)}:       {ProjectInfo.Value.AssemblyName}
+* {nameof(ProjectInfo.Value.RootNamespace)}:      {ProjectInfo.Value.RootNamespace}
+* {nameof(ProjectInfo.Value.TargetFramework)}:    {ProjectInfo.Value.TargetFramework}");
+                Console.WriteLine();
+
+            }
+            else Console.WriteLine("No project information.");
         }
 
     }
