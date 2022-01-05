@@ -1,4 +1,5 @@
 using NStandard;
+using System;
 using Xunit;
 
 namespace DotNetCli.Test
@@ -9,7 +10,9 @@ namespace DotNetCli.Test
         public void Test1()
         {
             using var console = ConsoleAgent.Begin();
-            var container = TestUtil.DefaultCmdContainer;
+            var container = new CmdContainer("cli");
+            container.OnException += ex => Console.Error.WriteLine(ex.Forward(x => x.InnerException, x => x.InnerException is null).Message);
+
             container.Run(new[] { "hello", "-h" });
             container.Run(new[] { "hello", "-n", "Jack" });
             container.Run(new[] { "hello", "-n", "Jack", "-e" });

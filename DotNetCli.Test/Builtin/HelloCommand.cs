@@ -20,7 +20,7 @@ namespace DotNetCli.Test.Builtin
 
         public override void Run()
         {
-            Console.WriteLine($"Hello {InputName}. (Enable: {Enable}, Flags: {(Flags?.Select(x => x.ToString()).Join("|") ?? "null")})");
+            Console.WriteLine($"Hello {InputName}. (Enable: {Enable}, Flags: {Flags?.Select(x => x.ToString()).Join("|") ?? "null"})");
         }
     }
 }

@@ -11,18 +11,16 @@ namespace DotNetCli
     {
         public readonly ProjectInfo ProjectInfo;
         public readonly string CliName;
+        public event Action<Exception> OnException;
 
         public readonly Dictionary<string, Type> Commands = new();
         public readonly Dictionary<string, CommandAttribute> CommandAttributes = new();
 
-        public CmdContainer(string cliName, ProjectInfo projectInfo)
+        public CmdContainer(string cliName) : this(cliName, Assembly.GetCallingAssembly()) { }
+        public CmdContainer(string cliName, Assembly assembly)
         {
-            ProjectInfo = projectInfo;
             CliName = cliName;
-        }
 
-        public virtual void CacheCommands(Assembly assembly)
-        {
             var types = assembly.GetTypesWhichMarkedAs<CommandAttribute>();
             foreach (var type in types)
             {
@@ -38,6 +36,11 @@ namespace DotNetCli
                     CommandAttributes[attr.Abbreviation.Trim().ToLower()] = attr;
                 }
             }
+        }
+
+        public void ClearExceptionHandler()
+        {
+            OnException = null;
         }
 
         public virtual void PrintUsage()
@@ -84,6 +87,11 @@ Commands:");
                 }
                 else PrintUsage();
             }
+            catch (Exception ex)
+            {
+                if (OnException is not null) OnException?.Invoke(ex);
+                else throw;
+            }
             finally
             {
                 try { Console.CursorVisible = true; }
@@ -91,7 +99,7 @@ Commands:");
             }
         }
 
-        public virtual void PrintProjectInfo()
+        public virtual void PrintProjectInfo(ProjectInfo projectInfo)
         {
             Console.WriteLine($@"
 * {nameof(ProjectInfo.ProjectName)}:        {ProjectInfo.ProjectName}

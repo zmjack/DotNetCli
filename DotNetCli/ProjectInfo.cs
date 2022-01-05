@@ -15,23 +15,26 @@ namespace DotNetCli
         public string CliPackagePath { get; set; }
         public string Sdk { get; set; }
 
-        public static ProjectInfo GetCurrent() => Get(Directory.GetCurrentDirectory());
-        public static ProjectInfo Get(string projectRootDirectory)
+        public static ProjectInfo GetForRootDirectory() => GetForRootDirectory(Directory.GetCurrentDirectory());
+        public static ProjectInfo GetForRootDirectory(string projectRootDirectory)
         {
-            var projectFile = Directory.GetFiles(projectRootDirectory, "*.csproj").For(files =>
-            {
-                if (files.Length == 0) throw new FileLoadException("The .csproj file has not found in the current directory.");
-                else if (files.Length > 1) throw new FileLoadException("More than one .csproj files are exist in the current directory.");
-                else return files[0];
-            });
-            var projectName = Path.GetFileName(projectFile);
+            var files = Directory.GetFiles(projectRootDirectory, "*.csproj");
+
+            if (files.Length == 0) throw new FileLoadException("The .csproj file has not found in the current directory.");
+            else if (files.Length > 1) throw new FileLoadException("More than one .csproj files are exist in the current directory.");
+            else return GetForProject(files[0]);
+        }
+
+        public static ProjectInfo GetForProject(string csprojFile)
+        {
+            var projectName = Path.GetFileName(csprojFile);
 
             var xml = new XmlDocument();
-            xml.Load(projectFile);
+            xml.Load(csprojFile);
 
             return new ProjectInfo
             {
-                ProjectRoot = projectRootDirectory,
+                ProjectRoot = Path.GetDirectoryName(csprojFile),
                 ProjectName = projectName,
                 AssemblyName = xml.SelectSingleNode("/Project/PropertyGroup/AssemblyName")?.InnerText ?? Path.GetFileNameWithoutExtension(projectName),
                 RootNamespace = xml.SelectSingleNode("/Project/PropertyGroup/RootNamespace")?.InnerText ?? Path.GetFileNameWithoutExtension(projectName),
@@ -40,5 +43,6 @@ namespace DotNetCli
                 Sdk = xml.SelectSingleNode("/Project")?.Attributes["Sdk"]?.InnerText,
             };
         }
+
     }
 }
