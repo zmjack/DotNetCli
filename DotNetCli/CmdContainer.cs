@@ -16,12 +16,12 @@ namespace DotNetCli
         public readonly Dictionary<string, Type> Commands = new();
         public readonly Dictionary<string, CommandAttribute> CommandAttributes = new();
 
-        public CmdContainer(string cliName) : this(cliName, Assembly.GetCallingAssembly()) { }
-        public CmdContainer(string cliName, Assembly assembly)
+        public CmdContainer(string cliName, Assembly cliAssembly, ProjectInfo projectInfo)
         {
             CliName = cliName;
+            ProjectInfo = projectInfo;
 
-            var types = assembly.GetTypesWhichMarkedAs<CommandAttribute>();
+            var types = cliAssembly.GetTypesWhichMarkedAs<CommandAttribute>();
             foreach (var type in types)
             {
                 var attr = type.GetCustomAttribute<CommandAttribute>();
@@ -99,7 +99,7 @@ Commands:");
             }
         }
 
-        public virtual void PrintProjectInfo(ProjectInfo projectInfo)
+        public virtual void PrintProjectInfo()
         {
             Console.WriteLine($@"
 * {nameof(ProjectInfo.ProjectName)}:        {ProjectInfo.ProjectName}

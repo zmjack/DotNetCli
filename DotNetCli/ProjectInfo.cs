@@ -15,17 +15,16 @@ namespace DotNetCli
         public string CliPackagePath { get; set; }
         public string Sdk { get; set; }
 
-        public static ProjectInfo GetForRootDirectory() => GetForRootDirectory(Directory.GetCurrentDirectory());
-        public static ProjectInfo GetForRootDirectory(string projectRootDirectory)
+        public static ProjectInfo GetFromDirectory(string directory)
         {
-            var files = Directory.GetFiles(projectRootDirectory, "*.csproj");
+            var files = Directory.GetFiles(directory, "*.csproj");
 
             if (files.Length == 0) throw new FileLoadException("The .csproj file has not found in the current directory.");
             else if (files.Length > 1) throw new FileLoadException("More than one .csproj files are exist in the current directory.");
-            else return GetForProject(files[0]);
+            else return GetFromFile(files[0]);
         }
 
-        public static ProjectInfo GetForProject(string csprojFile)
+        public static ProjectInfo GetFromFile(string csprojFile)
         {
             var projectName = Path.GetFileName(csprojFile);
 
