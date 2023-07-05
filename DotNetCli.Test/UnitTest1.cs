@@ -1,6 +1,6 @@
 using NStandard;
 using System;
-using System.Reflection;
+using System.Linq;
 using Xunit;
 
 namespace DotNetCli.Test
@@ -12,7 +12,12 @@ namespace DotNetCli.Test
         {
             using var console = ConsoleAgent.Begin();
             var container = Util.DefaultCmdContainer;
-            container.OnException += ex => Console.Error.WriteLine(ex.Forward(x => x.InnerException, x => x.InnerException is null).Message);
+            container.OnException += ex =>
+            {
+                var innerMostException = Any.Forward(ex, x => x.InnerException)
+                    .FirstOrDefault(x => x.InnerException is null);
+                Console.Error.WriteLine(innerMostException.Message);
+            };
 
             container.Run(new[] { "hello", "-h" });
             container.Run(new[] { "hello", "-n", "Jack" });

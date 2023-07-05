@@ -10,9 +10,8 @@ namespace DotNetCli
     public class CmdContainer
     {
         private readonly InvalidOperationException NoProjectInfoException = new("No project setted.");
-
-        public readonly ProjectInfo? ProjectInfo;
-        public readonly string CliName;
+        public Project? Project { get; set; }
+        public string CliName { get; }
         public event Action<Exception> OnException;
 
         public readonly Dictionary<string, Type> Commands = new();
@@ -39,9 +38,9 @@ namespace DotNetCli
             }
         }
 
-        public CmdContainer(string cliName, Assembly cliAssembly, ProjectInfo projectInfo) : this(cliName, cliAssembly)
+        public CmdContainer(string cliName, Assembly cliAssembly, Project projectInfo) : this(cliName, cliAssembly)
         {
-            ProjectInfo = projectInfo;
+            Project = projectInfo;
         }
 
         public void ClearExceptionHandler()
@@ -51,7 +50,7 @@ namespace DotNetCli
 
         public virtual void PrintUsage()
         {
-            if (ProjectInfo is null) throw NoProjectInfoException;
+            if (Project is null) throw NoProjectInfoException;
 
             var entry = Assembly.GetEntryAssembly().GetName();
             Console.WriteLine($@"{entry.Name} v{entry.Version}
@@ -69,7 +68,7 @@ Commands:");
 
         public virtual void Run(string[] args)
         {
-            if (ProjectInfo is null) throw NoProjectInfoException;
+            if (Project is null) throw NoProjectInfoException;
 
             if (!args.Any())
             {
@@ -110,15 +109,15 @@ Commands:");
 
         public virtual void PrintProjectInfo()
         {
-            if (ProjectInfo is null) throw NoProjectInfoException;
+            if (Project is null) throw NoProjectInfoException;
 
-            if (ProjectInfo is not null)
+            if (Project is not null)
             {
                 Console.WriteLine($@"
-* {nameof(ProjectInfo.Value.ProjectName)}:        {ProjectInfo.Value.ProjectName}
-* {nameof(ProjectInfo.Value.AssemblyName)}:       {ProjectInfo.Value.AssemblyName}
-* {nameof(ProjectInfo.Value.RootNamespace)}:      {ProjectInfo.Value.RootNamespace}
-* {nameof(ProjectInfo.Value.TargetFramework)}:    {ProjectInfo.Value.TargetFramework}");
+* {nameof(Project.Value.ProjectName)}:        {Project.Value.ProjectName}
+* {nameof(Project.Value.AssemblyName)}:       {Project.Value.AssemblyName}
+* {nameof(Project.Value.RootNamespace)}:      {Project.Value.RootNamespace}
+* {nameof(Project.Value.TargetFramework)}:    {Project.Value.TargetFramework}");
                 Console.WriteLine();
             }
         }

@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Reflection;
-using System.Text;
+﻿using System.Reflection;
 
 namespace DotNetCli.Test
 {
     public static class Util
     {
-        public static CmdContainer DefaultCmdContainer = new("cli", Assembly.GetExecutingAssembly(), ProjectInfo.GetFromDirectory("../../.."));
+        public static CmdContainer DefaultCmdContainer = new("cli", Assembly.GetExecutingAssembly(), Project.GetFromDirectory("../../.."));
 
     }
 }

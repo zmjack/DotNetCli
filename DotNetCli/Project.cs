@@ -1,11 +1,10 @@
-﻿using NStandard;
-using System.IO;
+﻿using System.IO;
 using System.Reflection;
 using System.Xml;
 
 namespace DotNetCli
 {
-    public struct ProjectInfo
+    public struct Project
     {
         public string ProjectRoot { get; set; }
         public string ProjectName { get; set; }
@@ -15,7 +14,7 @@ namespace DotNetCli
         public string CliPackagePath { get; set; }
         public string Sdk { get; set; }
 
-        public static ProjectInfo GetFromDirectory(string directory)
+        public static Project GetFromDirectory(string directory)
         {
             var files = Directory.GetFiles(directory, "*.csproj");
 
@@ -24,14 +23,14 @@ namespace DotNetCli
             else return GetFromFile(files[0]);
         }
 
-        public static ProjectInfo GetFromFile(string csprojFile)
+        public static Project GetFromFile(string csprojFile)
         {
             var projectName = Path.GetFileName(csprojFile);
 
             var xml = new XmlDocument();
             xml.Load(csprojFile);
 
-            return new ProjectInfo
+            return new Project
             {
                 ProjectRoot = Path.GetDirectoryName(csprojFile),
                 ProjectName = projectName,
