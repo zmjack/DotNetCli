@@ -9,6 +9,8 @@ namespace DotNetCli
 {
     public class CmdContainer
     {
+        private readonly InvalidOperationException NoProjectInfoException = new("No project setted.");
+
         public readonly ProjectInfo? ProjectInfo;
         public readonly string CliName;
         public event Action<Exception> OnException;
@@ -49,8 +51,9 @@ namespace DotNetCli
 
         public virtual void PrintUsage()
         {
-            var entry = Assembly.GetEntryAssembly().GetName();
+            if (ProjectInfo is null) throw NoProjectInfoException;
 
+            var entry = Assembly.GetEntryAssembly().GetName();
             Console.WriteLine($@"{entry.Name} v{entry.Version}
 
 Usage: dotnet {CliName} [command]
@@ -66,6 +69,8 @@ Commands:");
 
         public virtual void Run(string[] args)
         {
+            if (ProjectInfo is null) throw NoProjectInfoException;
+
             if (!args.Any())
             {
                 PrintUsage();
@@ -105,6 +110,8 @@ Commands:");
 
         public virtual void PrintProjectInfo()
         {
+            if (ProjectInfo is null) throw NoProjectInfoException;
+
             if (ProjectInfo is not null)
             {
                 Console.WriteLine($@"
@@ -113,9 +120,7 @@ Commands:");
 * {nameof(ProjectInfo.Value.RootNamespace)}:      {ProjectInfo.Value.RootNamespace}
 * {nameof(ProjectInfo.Value.TargetFramework)}:    {ProjectInfo.Value.TargetFramework}");
                 Console.WriteLine();
-
             }
-            else Console.WriteLine("No project information.");
         }
 
     }
