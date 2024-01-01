@@ -74,13 +74,15 @@ namespace DotNetCli
 
         public void PrintUsage()
         {
-            var props = GetType().GetProperties()
-                .Select(p => new
+            var props =
+                from prop in GetType().GetProperties()
+                let attribute = prop.GetCustomAttributes(typeof(CmdPropertyAttribute), false).FirstOrDefault() as CmdPropertyAttribute
+                where attribute is not null
+                select new
                 {
-                    Property = p,
-                    Attribute = p.GetCustomAttributes(typeof(CmdPropertyAttribute), false).FirstOrDefault() as CmdPropertyAttribute,
-                })
-                .Where(p => p.Attribute is not null);
+                    Property = prop,
+                    Attribute = attribute,
+                };
 
             if (!props.Any())
             {
