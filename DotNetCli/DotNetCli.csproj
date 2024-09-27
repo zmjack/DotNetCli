@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <Authors>zmjack</Authors>
-    <Version>0.3.3</Version>
+    <Version>0.4.0</Version>
     <Description>Build tools for DotNetCli creation.</Description>
     <PackageProjectUrl>https://github.com/zmjack/DotNetCli.git</PackageProjectUrl>
     <RepositoryUrl>https://github.com/zmjack/DotNetCli.git</RepositoryUrl>
@@ -28,8 +28,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Ink" Version="0.12.1" />
-    <PackageReference Include="NStandard" Version="0.56.1" />
+    <PackageReference Include="Ink" Version="0.13.0" />
+    <PackageReference Include="NStandard" Version="0.82.0.1" />
   </ItemGroup>
 
 </Project>

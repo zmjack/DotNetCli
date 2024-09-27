@@ -1,2 +1,2 @@
-nuget push "DotNetCli/bin/Release/DotNetCli.0.3.3.nupkg" -source nuget.org
+nuget push "DotNetCli/bin/Release/DotNetCli.0.4.0.nupkg" -source nuget.org
 pause

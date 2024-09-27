@@ -14,8 +14,8 @@ namespace DotNetCli
         public string CliName { get; }
         public event Action<Exception> OnException;
 
-        public readonly Dictionary<string, Type> Commands = new();
-        public readonly Dictionary<string, CommandAttribute> CommandAttributes = new();
+        public readonly Dictionary<string, Type> Commands = [];
+        public readonly Dictionary<string, CommandAttribute> CommandAttributes = [];
 
         public CmdContainer(string cliName, Assembly cliAssembly)
         {
@@ -87,7 +87,7 @@ Commands:");
                     var cmdType = Commands[cmdName];
                     var cmdAttr = CommandAttributes[cmdName];
 
-                    var command = Activator.CreateInstance(cmdType, new object[] { this, args }) as Command;
+                    var command = Activator.CreateInstance(cmdType, [this, args]) as Command;
                     command.Name = cmdAttr.Name;
                     command.Abbreviation = cmdAttr.Abbreviation;
                     command.Description = cmdAttr.Description;

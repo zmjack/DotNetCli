@@ -91,7 +91,7 @@ namespace DotNetCli
             }
             else
             {
-                var nameLength = props.Max(p => $"  {$"-{p.Attribute.Abbreviation}|--{p.Attribute.Name}"}").For(x => (x.Length + 1) + 4 - (x.Length + 1) % 4);
+                var nameLength = props.Max(p => $"  {$"-{p.Attribute.Abbreviation}|--{p.Attribute.Name}"}").Pipe(x => (x.Length + 1) + 4 - (x.Length + 1) % 4);
                 Console.WriteLine($"Usage: dotnet {Container.CliName} ({Abbreviation}|{Name}) [Options]");
                 Console.WriteLine();
                 Console.WriteLine($"Options:");
