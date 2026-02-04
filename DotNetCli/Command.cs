@@ -1,6 +1,7 @@
 ﻿
 using Ink;
 using NStandard;
+using NStandard.Static;
 using System;
 using System.Collections.Generic;
 using System.Linq;

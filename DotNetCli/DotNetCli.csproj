@@ -1,16 +1,16 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFrameworks>net10.0;net8.0;net6.0;netstandard2.0</TargetFrameworks>
     <Authors>zmjack</Authors>
-    <Version>0.4.0</Version>
+    <Version>0.10.0</Version>
     <Description>Build tools for DotNetCli creation.</Description>
     <PackageProjectUrl>https://github.com/zmjack/DotNetCli.git</PackageProjectUrl>
     <RepositoryUrl>https://github.com/zmjack/DotNetCli.git</RepositoryUrl>
     <PackageTags>DotNet CliTool</PackageTags>
     <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
     <RepositoryType>git</RepositoryType>
-    <Copyright>Copyright © dawnx.net 2019-2020</Copyright>
+    <Copyright>Copyright © nstandard.net 2019</Copyright>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <LangVersion>preview</LangVersion>
   </PropertyGroup>
@@ -28,8 +28,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Ink" Version="0.13.0" />
-    <PackageReference Include="NStandard" Version="0.82.0.1" />
+    <PackageReference Include="Ink" Version="0.14.0" />
+    <PackageReference Include="NStandard" Version="0.100.0" />
   </ItemGroup>
 
 </Project>
